@@ -49,7 +49,6 @@ public class Connection implements Runnable {
         return socket.getRemoteSocketAddress().toString();
     }
     
-    @Override
     public void run() {
         KeepAliveManager keepAliveManager = new KeepAliveManager(this);
         new Thread(keepAliveManager, "DFP Keep-Alive Thread: " + getPeerIdentifier()).start();
