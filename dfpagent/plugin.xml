@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+    <extension point="com.ibm.wsspi.extension.applicationserver-startup">
+        <components>
+            <component startup="5000"
+                       class="com.github.veithen.dfpagent.DFPAgentComponent"
+                       processType="Servant"
+                       component-id="DFPAgent"
+                       startup-mode="immediate">
+                <dependency type="service" name="com.ibm.ws.runtime.service.EndPointMgr"/>
+            </component>
+        </components>
+    </extension>
+</plugin>

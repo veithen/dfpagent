@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: DFP Agent
+Bundle-SymbolicName: dfpagent;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Require-Bundle: com.ibm.wsspi.extension
+Eclipse-AutoStart: true
+Import-Package: com.ibm.ejs.ras,
+ com.ibm.websphere.models.config.ipc,
+ com.ibm.ws.exception,
+ com.ibm.ws.runtime.service,
+ com.ibm.wsspi.runtime.component,
+ com.ibm.wsspi.runtime.service
+Export-Package: com.github.veithen.dfpagent.resources
