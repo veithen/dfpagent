@@ -8,11 +8,22 @@ import java.io.IOException;
 
 public class TLV {
     private final Type type;
-    private final byte[] value;
+    private byte[] value;
     
     public TLV(Type type, byte[] value) {
         this.type = type;
         this.value = value;
+    }
+    
+    /**
+     * Create a new TLV with uninitialized value. Use this constructor to build a TLV for an
+     * outgoing message. Use {@link #getValueWriter()} to initialize the value of the TLV.
+     * 
+     * @param type
+     *            the type of the TLV
+     */
+    public TLV(Type type) {
+        this(type, null);
     }
 
     public Type getType() {
@@ -23,6 +34,17 @@ public class TLV {
         return value.length;
     }
     
+    public ValueWriter getValueWriter() {
+        return new ValueWriter(this);
+    }
+    
+    void setValue(byte[] value) {
+        if (this.value != null) {
+            throw new IllegalStateException("Value already set");
+        }
+        this.value = value;
+    }
+
     public DataInput getValue() {
         return new DataInputStream(new ByteArrayInputStream(value));
     }

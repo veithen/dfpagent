@@ -145,9 +145,12 @@ public class Connection implements Runnable {
     /**
      * Send a Preference Information message as described in section 6.1 of the DFP specification.
      */
-    public void sendPreferenceInformation() {
+    public void sendPreferenceInformation() throws IOException {
         TLV load = new TLV(Type.LOAD);
-        new Message(MessageType.PREFERENCE_INFORMATION, Collections.singletonList(load));
+        ValueWriter out = load.getValueWriter();
+        // TODO
+        out.commit();
+        sendMessage(new Message(MessageType.PREFERENCE_INFORMATION, Collections.singletonList(load)));
     }
     
     public void stop() {
