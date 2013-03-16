@@ -1,4 +1,4 @@
-package com.github.veithen.dfpagent;
+package com.github.veithen.dfpagent.protocol.agent;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -6,15 +6,20 @@ import java.net.Socket;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Agent implements Runnable {
+
+public final class Agent implements Runnable {
     private final ServerSocket serverSocket;
-    private final List<Connection> connections = new LinkedList<Connection>();
+    private final List<Peer> peers = new LinkedList<Peer>();
     private final WeightInfoProvider weightInfoProvider;
     private boolean stopping;
     
     public Agent(ServerSocket serverSocket, WeightInfoProvider weightInfoProvider) {
         this.serverSocket = serverSocket;
         this.weightInfoProvider = weightInfoProvider;
+    }
+
+    WeightInfoProvider getWeightInfoProvider() {
+        return weightInfoProvider;
     }
 
     public void run() {
@@ -26,9 +31,9 @@ public class Agent implements Runnable {
                         socket.close();
                         break;
                     }
-                    Connection connection = new Connection(socket, weightInfoProvider);
-                    connections.add(connection);
-                    new Thread(connection, "DFP Connection Thread: " + connection.getPeerIdentifier()).start();
+                    Peer peer = new Peer(this, socket);
+                    peers.add(peer);
+                    new Thread(peer, "DFP Connection Thread: " + peer.getIdentifier()).start();
                 }
             }
         } catch (IOException ex) {
@@ -36,14 +41,10 @@ public class Agent implements Runnable {
         }
     }
     
-    public void updateWeight(int weight) {
-        
-    }
-    
     public synchronized void stop() throws IOException {
         stopping = true;
         serverSocket.close();
-        for (Connection connection : connections) {
+        for (Peer peer : peers) {
             // TODO
         }
     }

@@ -1,4 +1,5 @@
-package com.github.veithen.dfpagent;
+package com.github.veithen.dfpagent.protocol.agent;
+
 
 /**
  * Provides a collection of {@link WeightInfo} objects to an {@link Agent}.

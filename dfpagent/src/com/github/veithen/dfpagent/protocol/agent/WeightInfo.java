@@ -1,4 +1,4 @@
-package com.github.veithen.dfpagent;
+package com.github.veithen.dfpagent.protocol.agent;
 
 import java.net.Inet4Address;
 

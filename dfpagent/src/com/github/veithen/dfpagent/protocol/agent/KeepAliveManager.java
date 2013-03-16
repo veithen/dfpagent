@@ -1,22 +1,26 @@
-package com.github.veithen.dfpagent;
+package com.github.veithen.dfpagent.protocol.agent;
 
+import com.github.veithen.dfpagent.Constants;
 import com.github.veithen.dfpagent.resources.Messages;
 import com.ibm.ejs.ras.Tr;
 import com.ibm.ejs.ras.TraceComponent;
 
-public class KeepAliveManager implements Runnable {
+/**
+ * Schedules keep alives for a given {@link Peer}.
+ */
+final class KeepAliveManager implements Runnable {
     private static final TraceComponent TC = Tr.register(KeepAliveManager.class, Constants.TRACE_GROUP, Messages.class.getName());
     
-    private final Connection connection;
+    private final Peer peer;
     private long lastKeepAlive;
     private int interval;
     private boolean stopping;
 
-    public KeepAliveManager(Connection connection) {
-        this.connection = connection;
+    KeepAliveManager(Peer peer) {
+        this.peer = peer;
     }
     
-    public synchronized void setKeepAlive(int keepAlive) {
+    synchronized void setKeepAlive(int keepAlive) {
         // keepAlive is in seconds, but interval is in milliseconds.
         // Note that keepAlive is the maximum interval. We use an interval
         // that is 3/4 of the keepAlive.
@@ -24,7 +28,7 @@ public class KeepAliveManager implements Runnable {
         notifyAll();
     }
     
-    public synchronized void stop() {
+    synchronized void stop() {
         stopping = true;
         notifyAll();
     }
@@ -45,7 +49,11 @@ public class KeepAliveManager implements Runnable {
                         if (TC.isDebugEnabled()) {
                             Tr.debug(TC, "Triggering keep-alive");
                         }
-                        connection.keepAlive();
+                        try {
+                            peer.sendPreferenceInformation();
+                        } catch (Throwable ex) {
+                            Tr.error(TC, Messages._0012E, ex);
+                        }
                         lastKeepAlive = currentTime;
                     } else {
                         if (TC.isDebugEnabled()) {
