@@ -1,4 +1,6 @@
-package com.github.veithen.dfpagent;
+package com.github.veithen.dfpagent.protocol.message;
+
+import com.github.veithen.dfpagent.protocol.tlv.Type;
 
 /**
  * Indicates that a required TLV was missing in the DFP message.

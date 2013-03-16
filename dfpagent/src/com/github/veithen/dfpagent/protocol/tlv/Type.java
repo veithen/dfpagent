@@ -1,4 +1,4 @@
-package com.github.veithen.dfpagent;
+package com.github.veithen.dfpagent.protocol.tlv;
 
 public enum Type {
     SECURITY(0x0001, "Security"),

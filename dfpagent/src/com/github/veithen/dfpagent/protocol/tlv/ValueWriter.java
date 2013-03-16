@@ -1,4 +1,4 @@
-package com.github.veithen.dfpagent;
+package com.github.veithen.dfpagent.protocol.tlv;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutput;
@@ -8,7 +8,7 @@ import java.io.IOException;
 /**
  * Prepares the value of a {@link TLV}.
  */
-public class ValueWriter implements DataOutput {
+public final class ValueWriter implements DataOutput {
     private final TLV tlv;
     private final ByteArrayOutputStream baos;
     private final DataOutput out;

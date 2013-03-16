@@ -1,4 +1,4 @@
-package com.github.veithen.dfpagent;
+package com.github.veithen.dfpagent.protocol.message;
 
 public enum MessageType {
     PREFERENCE_INFORMATION(0x0101, "Preference Information"),

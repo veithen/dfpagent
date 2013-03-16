@@ -1,4 +1,4 @@
-package com.github.veithen.dfpagent;
+package com.github.veithen.dfpagent.protocol.tlv;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInput;
@@ -6,7 +6,7 @@ import java.io.DataInputStream;
 import java.io.DataOutput;
 import java.io.IOException;
 
-public class TLV {
+public final class TLV {
     private final Type type;
     private byte[] value;
     

@@ -1,4 +1,4 @@
-package com.github.veithen.dfpagent;
+package com.github.veithen.dfpagent.protocol;
 
 public final class DFPConstants {
     private DFPConstants() {}

@@ -1,7 +1,10 @@
-package com.github.veithen.dfpagent;
+package com.github.veithen.dfpagent.protocol.message;
 
 import java.util.Iterator;
 import java.util.List;
+
+import com.github.veithen.dfpagent.protocol.tlv.TLV;
+import com.github.veithen.dfpagent.protocol.tlv.Type;
 
 /**
  * A DFP message.

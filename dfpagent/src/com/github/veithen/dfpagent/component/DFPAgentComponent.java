@@ -1,8 +1,10 @@
-package com.github.veithen.dfpagent;
+package com.github.veithen.dfpagent.component;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 
+import com.github.veithen.dfpagent.Agent;
+import com.github.veithen.dfpagent.Constants;
 import com.github.veithen.dfpagent.resources.Messages;
 import com.ibm.ejs.ras.Tr;
 import com.ibm.ejs.ras.TraceComponent;
