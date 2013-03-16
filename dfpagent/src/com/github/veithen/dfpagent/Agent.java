@@ -9,12 +9,12 @@ import java.util.List;
 public class Agent implements Runnable {
     private final ServerSocket serverSocket;
     private final List<Connection> connections = new LinkedList<Connection>();
-    private final int httpPort;
+    private final WeightInfoProvider weightInfoProvider;
     private boolean stopping;
     
-    public Agent(ServerSocket serverSocket, int httpPort) {
+    public Agent(ServerSocket serverSocket, WeightInfoProvider weightInfoProvider) {
         this.serverSocket = serverSocket;
-        this.httpPort = httpPort;
+        this.weightInfoProvider = weightInfoProvider;
     }
 
     public void run() {
@@ -26,7 +26,7 @@ public class Agent implements Runnable {
                         socket.close();
                         break;
                     }
-                    Connection connection = new Connection(socket);
+                    Connection connection = new Connection(socket, weightInfoProvider);
                     connections.add(connection);
                     new Thread(connection, "DFP Connection Thread: " + connection.getPeerIdentifier()).start();
                 }

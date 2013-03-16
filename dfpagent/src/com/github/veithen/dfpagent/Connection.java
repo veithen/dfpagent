@@ -5,7 +5,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,11 +38,13 @@ public class Connection implements Runnable {
     private final Socket socket;
     private final DataInputStream in;
     private final DataOutputStream out;
+    private final WeightInfoProvider weightInfoProvider;
 
-    public Connection(Socket socket) throws IOException {
+    public Connection(Socket socket, WeightInfoProvider weightInfoProvider) throws IOException {
         this.socket = socket;
         in = new DataInputStream(socket.getInputStream());
         out = new DataOutputStream(socket.getOutputStream());
+        this.weightInfoProvider = weightInfoProvider;
     }
 
     /**
@@ -151,13 +152,49 @@ public class Connection implements Runnable {
     
     /**
      * Send a Preference Information message as described in section 6.1 of the DFP specification.
+     * This method will call {@link WeightInfoProvider#getWeightInfo()} to get the current weights.
      */
     public void sendPreferenceInformation() throws IOException {
-        TLV load = new TLV(Type.LOAD);
-        ValueWriter out = load.getValueWriter();
-        // TODO
-        out.commit();
-        sendMessage(new Message(MessageType.PREFERENCE_INFORMATION, Collections.singletonList(load)));
+        // From the DFP spec: "The real servers are first grouped by
+        // their port number and protocol type requiring a separate Load TLV for
+        // each grouping."
+        Map<Integer,List<WeightInfo>> loadMap = new HashMap<Integer,List<WeightInfo>>();
+        for (WeightInfo weightInfo : weightInfoProvider.getWeightInfo()) {
+            Integer port = weightInfo.getPort();
+            List<WeightInfo> list = loadMap.get(port);
+            if (list == null) {
+                list = new ArrayList<WeightInfo>();
+                loadMap.put(port, list);
+            }
+            list.add(weightInfo);
+        }
+        List<TLV> tlvs = new ArrayList<TLV>(loadMap.size());
+        for (Map.Entry<Integer,List<WeightInfo>> entry : loadMap.entrySet()) {
+            TLV load = new TLV(Type.LOAD);
+            ValueWriter out = load.getValueWriter();
+            // ** Port Number **
+            out.writeShort(entry.getKey());
+            // ** Protocol **
+            // Note: the DPF spec is missing the actual values for the protocol field;
+            // it only specified the wildcard value (0x00)
+            out.writeByte(0);
+            // ** Flags **
+            out.writeByte(0);
+            // ** Number of Hosts **
+            out.writeShort(entry.getValue().size());
+            // ** Reserved **
+            out.writeShort(0);
+            for (WeightInfo weightInfo : entry.getValue()) {
+                // ** IP Address **
+                out.write(weightInfo.getAddress().getAddress());
+                // ** BindID **
+                out.writeShort(0);
+                // ** Weight **
+                out.writeShort(weightInfo.getWeight());
+            }
+            out.commit();
+        }
+        sendMessage(new Message(MessageType.PREFERENCE_INFORMATION, tlvs));
     }
     
     public void stop() {
