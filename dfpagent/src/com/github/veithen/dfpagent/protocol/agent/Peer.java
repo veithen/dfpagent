@@ -48,14 +48,20 @@ final class Peer implements Runnable, Handler {
     }
     
     public void run() {
+        Tr.info(TC, Messages._0014I, identifier);
         new Thread(keepAliveManager, "DFP Keep-Alive Thread: " + identifier).start();
         try {
             connection.run();
         } finally {
             keepAliveManager.stop();
+            Tr.info(TC, Messages._0015I, identifier);
         }
     }
     
+    void stop() {
+        connection.stop();
+    }
+
     public void processMessage(Message message) throws IOException {
         try {
             switch (message.getType()) {

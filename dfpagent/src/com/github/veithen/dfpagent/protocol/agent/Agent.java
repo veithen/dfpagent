@@ -6,8 +6,14 @@ import java.net.Socket;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.github.veithen.dfpagent.Constants;
+import com.github.veithen.dfpagent.resources.Messages;
+import com.ibm.ejs.ras.Tr;
+import com.ibm.ejs.ras.TraceComponent;
 
 public final class Agent implements Runnable {
+    private static final TraceComponent TC = Tr.register(Agent.class, Constants.TRACE_GROUP, Messages.class.getName());
+    
     private final ServerSocket serverSocket;
     private final List<Peer> peers = new LinkedList<Peer>();
     private final WeightInfoProvider weightInfoProvider;
@@ -23,10 +29,12 @@ public final class Agent implements Runnable {
     }
 
     public void run() {
+        boolean stopping = false;
         try {
             while (true) {
                 Socket socket = serverSocket.accept();
                 synchronized (this) {
+                    stopping = this.stopping;
                     if (stopping) {
                         socket.close();
                         break;
@@ -37,7 +45,9 @@ public final class Agent implements Runnable {
                 }
             }
         } catch (IOException ex) {
-            // TODO
+            if (!stopping) {
+                Tr.error(TC, Messages._0013E, ex);
+            }
         }
     }
     
@@ -45,7 +55,7 @@ public final class Agent implements Runnable {
         stopping = true;
         serverSocket.close();
         for (Peer peer : peers) {
-            // TODO
+            peer.stop();
         }
     }
 }

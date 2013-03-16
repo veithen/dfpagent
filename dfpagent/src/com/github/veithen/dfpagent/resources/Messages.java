@@ -15,6 +15,9 @@ public class Messages extends ListResourceBundle {
     public static final String _0010W = "0010W";
     public static final String _0011E = "0011E";
     public static final String _0012E = "0012E";
+    public static final String _0013E = "0013E";
+    public static final String _0014I = "0014I";
+    public static final String _0015I = "0015I";
     
     private static final Object[][] contents = {
         { _0001I, "DFP0001I: DFP Agent is disabled" },
@@ -29,6 +32,9 @@ public class Messages extends ListResourceBundle {
         { _0010W, "DFP0010W: Received unknown TLV with type {0}" },
         { _0011E, "DFP0011E: Received TLV of type {0} with unexpected data length" },
         { _0012E, "DFP0012E: Keep-alive failed:\n{0}" },
+        { _0013E, "DFP0013E: Unexpected exception in accept loop:\n{0}" },
+        { _0014I, "DFP0014I: Peer {0} connected" },
+        { _0015I, "DFP0015I: Peer {0} disconnected" },
     };
     
     @Override
