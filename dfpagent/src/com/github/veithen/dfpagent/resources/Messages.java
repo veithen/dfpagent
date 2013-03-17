@@ -18,6 +18,8 @@ public class Messages extends ListResourceBundle {
     public static final String _0013E = "0013E";
     public static final String _0014I = "0014I";
     public static final String _0015I = "0015I";
+    public static final String _0016I = "0016I";
+    public static final String _0017I = "0017I";
     
     private static final Object[][] contents = {
         { _0001I, "DFP0001I: DFP Agent is disabled" },
@@ -35,6 +37,8 @@ public class Messages extends ListResourceBundle {
         { _0013E, "DFP0013E: Unexpected exception in accept loop:\n{0}" },
         { _0014I, "DFP0014I: Peer {0} connected" },
         { _0015I, "DFP0015I: Peer {0} disconnected" },
+        { _0016I, "DFP0016I: WC_defaulthost is not listening on any IPv4 address" },
+        { _0017I, "DFP0017I: Updating server weight. Old value: {0}; new value: {1}" },
     };
     
     @Override
