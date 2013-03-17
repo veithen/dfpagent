@@ -1,5 +1,6 @@
 package com.github.veithen.dfpagent.protocol.message;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -16,6 +17,10 @@ public class Message implements Iterable<TLV> {
     public Message(MessageType type, List<TLV> tlvs) {
         this.type = type;
         this.tlvs = tlvs;
+    }
+    
+    public Message(MessageType type, TLV... tlvs) {
+        this(type, Arrays.asList(tlvs));
     }
 
     public MessageType getType() {
