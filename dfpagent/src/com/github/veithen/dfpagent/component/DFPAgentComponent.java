@@ -21,9 +21,9 @@ import com.ibm.ejs.ras.TraceComponent;
 import com.ibm.websphere.models.config.ipc.EndPoint;
 import com.ibm.ws.exception.RuntimeError;
 import com.ibm.ws.exception.RuntimeWarning;
-import com.ibm.ws.runtime.service.ApplicationServer;
 import com.ibm.ws.runtime.service.EndPointMgr;
 import com.ibm.ws.runtime.service.EndPointMgr.ServerEndPoints;
+import com.ibm.ws.runtime.service.Server;
 import com.ibm.wsspi.runtime.component.WsComponentImpl;
 import com.ibm.wsspi.runtime.service.WsServiceRegistry;
 
@@ -40,10 +40,10 @@ public class DFPAgentComponent extends WsComponentImpl implements PropertyChange
     @Override
     public void start() throws RuntimeError, RuntimeWarning {
         EndPointMgr epMgr;
-        ApplicationServer appServer;
+        Server server;
         try {
             epMgr = WsServiceRegistry.getService(this, EndPointMgr.class);
-            appServer = WsServiceRegistry.getService(this, ApplicationServer.class);
+            server = WsServiceRegistry.getService(this, Server.class);
         } catch (Exception ex) {
             throw new RuntimeError(ex);
         }
@@ -99,7 +99,12 @@ public class DFPAgentComponent extends WsComponentImpl implements PropertyChange
         }
         agent = new Agent(serverSocket, this);
         new Thread(agent, "DFP Acceptor Thread").start();
-        appServer.addPropertyChangeListener("state", this);
+        
+        // We register the listener on the Server component (not the ApplicationServer component)
+        // to ensure that we get notified after the HTTP port has been opened and before the HTTP
+        // port is closed. With the ApplicationServer component, that is not the case.
+        server.addPropertyChangeListener("state", this);
+        
         Tr.info(TC, Messages._0002I, agentPort);
     }
 
