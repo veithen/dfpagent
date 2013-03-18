@@ -115,19 +115,20 @@ public class DFPAgentComponent extends WsComponentImpl implements PropertyChange
         }
         String value = (String)event.getNewValue();
         if (value.equals("STARTED")) {
-            setWeight(1);
+            updateWeight(1);
         } else if (value.equals("STOPPING")) {
-            setWeight(0);
+            updateWeight(0);
         }
     }
 
-    private void setWeight(int weight) {
+    private void updateWeight(int weight) {
         synchronized (weightLock) {
             if (TC.isInfoEnabled()) {
                 Tr.info(TC, Messages._0017I, new Object[] { this.weight, weight });
             }
             this.weight = weight;
         }
+        agent.sendPreferenceInformation();
     }
     
     public WeightInfo[] getWeightInfo() {

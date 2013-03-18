@@ -58,4 +58,17 @@ public final class Agent implements Runnable {
             peer.stop();
         }
     }
+    
+    /**
+     * Send a Preference Information message to all peers to inform them of updated server weights.
+     */
+    public void sendPreferenceInformation() {
+        for (Peer peer : peers) {
+            try {
+                peer.sendPreferenceInformation();
+            } catch (IOException ex) {
+                Tr.error(TC, Messages._0018E, new Object[] { peer.getIdentifier(), ex });
+            }
+        }
+    }
 }
