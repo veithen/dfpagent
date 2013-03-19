@@ -95,26 +95,24 @@ final class Peer implements Runnable, Handler {
         // From the DFP spec: "The real servers are first grouped by
         // their port number and protocol type requiring a separate Load TLV for
         // each grouping."
-        Map<Integer,List<WeightInfo>> loadMap = new HashMap<Integer,List<WeightInfo>>();
+        Map<PortAndProtocol,List<WeightInfo>> loadMap = new HashMap<PortAndProtocol,List<WeightInfo>>();
         for (WeightInfo weightInfo : agent.getWeightInfoProvider().getWeightInfo()) {
-            Integer port = weightInfo.getPort();
-            List<WeightInfo> list = loadMap.get(port);
+            PortAndProtocol key = new PortAndProtocol(weightInfo.getPort(), weightInfo.getProtocol());
+            List<WeightInfo> list = loadMap.get(key);
             if (list == null) {
                 list = new ArrayList<WeightInfo>();
-                loadMap.put(port, list);
+                loadMap.put(key, list);
             }
             list.add(weightInfo);
         }
         List<TLV> tlvs = new ArrayList<TLV>(loadMap.size());
-        for (Map.Entry<Integer,List<WeightInfo>> entry : loadMap.entrySet()) {
+        for (Map.Entry<PortAndProtocol,List<WeightInfo>> entry : loadMap.entrySet()) {
             TLV load = new TLV(Type.LOAD);
             ValueWriter out = load.getValueWriter();
             // ** Port Number **
-            out.writeShort(entry.getKey());
+            out.writeShort(entry.getKey().getPort());
             // ** Protocol **
-            // Note: the DPF spec is missing the actual values for the protocol field;
-            // it only specified the wildcard value (0x00)
-            out.writeByte(0);
+            out.writeByte(entry.getKey().getProtocol().getCode());
             // ** Flags **
             out.writeByte(0);
             // ** Number of Hosts **

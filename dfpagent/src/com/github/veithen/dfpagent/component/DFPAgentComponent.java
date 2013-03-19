@@ -12,6 +12,7 @@ import java.util.Enumeration;
 import java.util.List;
 
 import com.github.veithen.dfpagent.Constants;
+import com.github.veithen.dfpagent.protocol.Protocol;
 import com.github.veithen.dfpagent.protocol.agent.Agent;
 import com.github.veithen.dfpagent.protocol.agent.WeightInfo;
 import com.github.veithen.dfpagent.protocol.agent.WeightInfoProvider;
@@ -138,7 +139,7 @@ public class DFPAgentComponent extends WsComponentImpl implements PropertyChange
         }
         WeightInfo[] result = new WeightInfo[httpAddresses.length];
         for (int i=0; i<httpAddresses.length; i++) {
-            result[i] = new WeightInfo(httpAddresses[i], httpPort, weight);
+            result[i] = new WeightInfo(httpAddresses[i], Protocol.TCP, httpPort, weight);
         }
         return result;
     }
