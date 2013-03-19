@@ -1,5 +1,6 @@
 package com.github.veithen.dfpagent.protocol.connection;
 
+import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -59,7 +60,10 @@ public final class Connection implements Runnable {
     public Connection(Socket socket, Handler handler) throws IOException {
         this.socket = socket;
         in = new DataInputStream(socket.getInputStream());
-        out = new DataOutputStream(socket.getOutputStream());
+        // Using a buffer for outgoing messages is important. If no buffer is used, the
+        // message may be split over multiple packets, and CSS doesn't like that: it rejects
+        // the message with "NETMAN-4: DFP: Malformed or incomplete packet or host preference received."
+        out = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream(), 4096));
         this.handler = handler;
     }
 
