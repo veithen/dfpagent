@@ -49,6 +49,11 @@ public final class TLV {
         return new DataInputStream(new ByteArrayInputStream(value));
     }
     
+    // TODO: do we really want this?
+    public byte[] toByteArray() {
+        return value;
+    }
+    
     public void writeValue(DataOutput out) throws IOException {
         out.write(value);
     }

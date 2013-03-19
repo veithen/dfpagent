@@ -11,6 +11,7 @@ import java.util.Map;
 
 import com.github.veithen.dfpagent.Constants;
 import com.github.veithen.dfpagent.protocol.DFPConstants;
+import com.github.veithen.dfpagent.protocol.connection.Interceptor.Direction;
 import com.github.veithen.dfpagent.protocol.message.Message;
 import com.github.veithen.dfpagent.protocol.message.MessageType;
 import com.github.veithen.dfpagent.protocol.tlv.TLV;
@@ -51,6 +52,7 @@ public final class Connection implements Runnable {
     
     private final Socket socket;
     private final Handler handler;
+    private final List<Interceptor> interceptors = new ArrayList<Interceptor>();
     private final DataInputStream in;
     private final DataOutputStream out;
 
@@ -61,6 +63,10 @@ public final class Connection implements Runnable {
         this.handler = handler;
     }
 
+    public void addInterceptor(Interceptor interceptor) {
+        interceptors.add(interceptor);
+    }
+    
     public void run() {
         try {
             ml: while (true) {
@@ -98,7 +104,9 @@ public final class Connection implements Runnable {
                 if (messageType == null) {
                     Tr.warning(TC, Messages._0009W, messageTypeCode);
                 } else {
-                    handler.processMessage(new Message(messageType, tlvs));
+                    Message message = new Message(messageType, tlvs);
+                    invokeInterceptors(message, Direction.INBOUND);
+                    handler.processMessage(message);
                 }
             }
             socket.close();
@@ -113,6 +121,7 @@ public final class Connection implements Runnable {
      * @param message the message to send
      */
     public synchronized void sendMessage(Message message) throws IOException {
+        invokeInterceptors(message, Direction.OUTBOUND);
         int length = 8;
         for (TLV tlv : message) {
             length += tlv.getDataLength() + 4;
@@ -130,5 +139,11 @@ public final class Connection implements Runnable {
     
     public void stop() {
         // TODO
+    }
+    
+    private void invokeInterceptors(Message message, Direction direction) throws IOException {
+        for (Interceptor interceptor : interceptors) {
+            interceptor.processMessage(message, direction);
+        }
     }
 }

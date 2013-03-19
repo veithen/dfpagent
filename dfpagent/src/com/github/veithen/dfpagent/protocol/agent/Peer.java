@@ -10,6 +10,7 @@ import java.util.Map;
 import com.github.veithen.dfpagent.Constants;
 import com.github.veithen.dfpagent.protocol.connection.Connection;
 import com.github.veithen.dfpagent.protocol.connection.Handler;
+import com.github.veithen.dfpagent.protocol.connection.LogInterceptor;
 import com.github.veithen.dfpagent.protocol.message.Message;
 import com.github.veithen.dfpagent.protocol.message.MessageType;
 import com.github.veithen.dfpagent.protocol.message.MissingTLVException;
@@ -33,9 +34,10 @@ final class Peer implements Runnable, Handler {
     
     Peer(Agent agent, Socket socket) throws IOException {
         this.agent = agent;
-        connection = new Connection(socket, this);
-        keepAliveManager = new KeepAliveManager(this);
         identifier = socket.getRemoteSocketAddress().toString();
+        connection = new Connection(socket, this);
+        connection.addInterceptor(new LogInterceptor(identifier));
+        keepAliveManager = new KeepAliveManager(this);
     }
 
     /**
