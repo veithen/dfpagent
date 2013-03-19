@@ -35,9 +35,12 @@ public class LogInterceptor implements Interceptor{
     private static void hexDump(StringBuilder buffer, byte[] data, int length) {
         for (int start = 0; start < length; start += 16) {
             for (int i=0; i<16; i++) {
+                if (i == 8) {
+                    buffer.append(' ');
+                }
                 int index = start+i;
                 if (index < length) {
-                    String hex = Integer.toHexString(data[start+i]);
+                    String hex = Integer.toHexString(data[start+i] & 0xFF);
                     if (hex.length() == 1) {
                         buffer.append('0');
                     }
@@ -46,9 +49,6 @@ public class LogInterceptor implements Interceptor{
                     buffer.append("  ");
                 }
                 buffer.append(' ');
-                if (i == 8) {
-                    buffer.append(' ');
-                }
             }
             buffer.append(" |");
             for (int i=0; i<16; i++) {
