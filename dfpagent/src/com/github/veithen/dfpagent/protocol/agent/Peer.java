@@ -171,6 +171,7 @@ final class Peer implements Runnable, Handler {
                 out.writeShort(weightInfo.getWeight());
             }
             out.commit();
+            tlvs.add(load);
         }
         connection.sendMessage(new Message(MessageType.PREFERENCE_INFORMATION, tlvs));
     }
