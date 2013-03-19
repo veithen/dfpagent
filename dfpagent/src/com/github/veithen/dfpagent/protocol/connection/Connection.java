@@ -94,7 +94,7 @@ public final class Connection implements Runnable {
                     }
                     remaining -= length;
                 }
-                MessageType messageType = messageTypeByCode.get(messageTypeByCode);
+                MessageType messageType = messageTypeByCode.get(messageTypeCode);
                 if (messageType == null) {
                     Tr.warning(TC, Messages._0009W, messageTypeCode);
                 } else {
